@@ -3,8 +3,9 @@ package render
 import (
 	"bytes"
 	"fmt"
-	"github.com/haodev88/bookings/pkg/config"
-	"github.com/haodev88/bookings/pkg/models"
+	"github.com/haodev88/bookings/internal/config"
+	"github.com/haodev88/bookings/internal/models"
+	"github.com/justinas/nosurf"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,11 +19,12 @@ func NewTemplates(appConfig *config.AppConfig)  {
 	app = appConfig
 }
 
-func addDefaultData(data *models.TempldateData) *models.TempldateData {
+func addDefaultData(data *models.TempldateData, r *http.Request) *models.TempldateData {
+	data.CSRFToken = nosurf.Token(r)
 	return data
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, data *models.TempldateData)  {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data *models.TempldateData)  {
 	var tc map[string]*template.Template
 	if app.UseCache {
 		tc = app.TemplateCache
@@ -36,7 +38,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, data *models.TempldateDa
 		log.Fatal("could not get template cache")
 	}
 
-	data = addDefaultData(data)
+	data = addDefaultData(data, r)
 	buf := new(bytes.Buffer)
 	_ = t.Execute(buf, data)
 	_,err := buf.WriteTo(w)

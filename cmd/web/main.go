@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/alexedwards/scs/v2"
-	"github.com/haodev88/bookings/pkg/config"
-	"github.com/haodev88/bookings/pkg/handlers"
-	"github.com/haodev88/bookings/pkg/render"
+	"github.com/haodev88/bookings/internal/config"
+	"github.com/haodev88/bookings/internal/handlers"
+	"github.com/haodev88/bookings/internal/render"
 	"log"
 	"net/http"
 	"time"
@@ -32,7 +32,7 @@ func main()  {
 	}
 	app.TemplateCache = tc
 	app.UseCache = false
-
+	app.Session  = session
 
 	/** call handeler **/
 	repo := handlers.NewRepo(&app)

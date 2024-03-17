@@ -159,7 +159,7 @@
         }, false);
     })();
 	
-	// if (document.getElementById("colorButton")) {
+	if (document.getElementById("colorButton")) {
 		document.getElementById("colorButton").addEventListener("click", function () {
 			let html = `
 			<form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
@@ -183,7 +183,7 @@
 				msg: html,
 			});
 		})
-	// }
+	}
  
     const elem = document.getElementById('reservation-dates');
     const rangePicker = new DateRangePicker(elem, {

@@ -1,5 +1,7 @@
 package models
 
+import "github.com/haodev88/bookings/internal/forms"
+
 type TempldateData struct {
 	StringMap map[string]string
 	intMap map[string]int
@@ -9,4 +11,5 @@ type TempldateData struct {
 	Flash string
 	Warning string
 	Error string
+	Form *forms.Form
 }

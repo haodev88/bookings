@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/haodev88/bookings/internal/config"
@@ -14,14 +15,23 @@ func routes(app *config.AppConfig) http.Handler  {
 	// mux.Use(WriteToConsole)
 	mux.Use(SessionLoad)
 	mux.Use(Nosurf)
-	mux.Get("/", http.HandlerFunc(handlers.Repo.Home))
-	mux.Get("/about", http.HandlerFunc(handlers.Repo.About))
-	mux.Get("/generals-quarters", http.HandlerFunc(handlers.Repo.Generals))
-	mux.Get("/majors-suite", http.HandlerFunc(handlers.Repo.Majors))
-	mux.Get("/search-availabitily", http.HandlerFunc(handlers.Repo.Availabitily))
-	mux.Post("/search-availabitily", http.HandlerFunc(handlers.Repo.PostAvailabitily))
-	mux.Get("/make-reservation", http.HandlerFunc(handlers.Repo.Reservation))
-	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
+
+	mux.Get("/test", test)
+
+	mux.Get("/", handlers.Repo.Home)
+	mux.Get("/about", handlers.Repo.About)
+	mux.Get("/generals-quarters", handlers.Repo.Generals)
+	mux.Get("/majors-suite", handlers.Repo.Majors)
+
+	mux.Get("/search-availabitily", handlers.Repo.Availabitily)
+	mux.Post("/search-availabitily", handlers.Repo.PostAvailabitily)
+	mux.Post("/search-availabitily-json", handlers.Repo.AvailabitilyJson)
+
+	mux.Get("/make-reservation", handlers.Repo.Reservation)
+	mux.Post("/make-reservation", handlers.Repo.PostReservation)
+	mux.Get("/reservation-summary", handlers.Repo.ReservationSummary)
+
+	mux.Get("/contact", handlers.Repo.Contact)
 
 	// load static file in forder static
 	fileServer := http.FileServer(http.Dir("./static/"))
@@ -29,4 +39,8 @@ func routes(app *config.AppConfig) http.Handler  {
 	// end load static file
 
 	return mux
+}
+
+func test(w http.ResponseWriter, r *http.Request)  {
+	_,_ = w.Write([]byte(fmt.Sprintf("This is test function %s", "test")))
 }

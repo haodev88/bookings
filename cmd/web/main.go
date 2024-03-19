@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/haodev88/bookings/internal/config"
 	"github.com/haodev88/bookings/internal/handlers"
+	"github.com/haodev88/bookings/internal/models"
 	"github.com/haodev88/bookings/internal/render"
 	"log"
 	"net/http"
@@ -15,7 +17,10 @@ const PORT_NUM =  ":8080"
 var app config.AppConfig
 var session *scs.SessionManager
 
-func main()  {
+func main() {
+	// Register gob
+	gob.Register(models.Reservation{})
+
 	// change this to true when in production
 	app.InProduction = true
 

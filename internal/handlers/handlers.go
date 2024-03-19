@@ -1,16 +1,20 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/haodev88/bookings/internal/config"
+	"github.com/haodev88/bookings/internal/forms"
 	"github.com/haodev88/bookings/internal/models"
 	"github.com/haodev88/bookings/internal/render"
+	"log"
 	"net/http"
 )
 
 type Repository struct {
 	App *config.AppConfig
 }
+
 
 var Repo *Repository
 
@@ -43,8 +47,61 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request)  {
 }
 
 func (m *Repository) Reservation (w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TempldateData{
+	var emptyReservation models.Reservation
+	data:= make(map[string]interface{})
+	data["reservation"] = emptyReservation
+	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TempldateData {
+		Form:forms.New(nil),
+		Data: data,
+	})
+}
 
+func (m *Repository) PostReservation (w http.ResponseWriter, r *http.Request) {
+	err:=r.ParseForm()
+	if err!=nil {
+		log.Println(err)
+		return
+	}
+
+	reservation:= models.Reservation{
+		FirstName: r.Form.Get("first_name"),
+		LastName: r.Form.Get("last_name"),
+		Phone: r.Form.Get("phone"),
+		Email: r.Form.Get("email"),
+	}
+
+	form:=forms.New(r.PostForm)
+	// form.Has("first_name", r)
+	form.Required(r, "first_name", "last_name", "email")
+	form.MinLength("first_name",3, r)
+	form.IsEmail("email")
+
+	if !form.Valid() {
+		data:=make(map[string]interface{})
+		data["reservation"] = reservation
+		render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TempldateData {
+			Form: form,
+			Data: data,
+		})
+	}
+
+	m.App.Session.Put(r.Context(), "reservation", reservation)
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+}
+
+func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+	reservation,ok := m.App.Session.Get(r.Context(),"reservation").(models.Reservation)
+	if !ok {
+		// log.Println("can not get item from session")
+		m.App.Session.Put(r.Context(), "error", "Can't get reservation")
+		http.Redirect(w, r,"/", http.StatusTemporaryRedirect)
+	}
+	m.App.Session.Remove(r.Context(), "reservation")
+	var data map[string]interface{}
+	data = make(map[string]interface{})
+	data["reservation"] = reservation
+	render.RenderTemplate(w, r, "reservation-summary.page.tmpl", &models.TempldateData{
+		Data: data,
 	})
 }
 
@@ -72,6 +129,25 @@ func (m *Repository) PostAvailabitily(w http.ResponseWriter, r *http.Request) {
 	startDate := r.Form.Get("start")
 	endDate   := r.Form.Get("end")
 	_,_ = w.Write([]byte(fmt.Sprintf("Start data is %s and end date is %s", startDate, endDate)))
+}
+
+type jsonResponse struct {
+	Ok bool `json:"ok"`
+	Message string `json:"message"`
+}
+
+func (m * Repository) AvailabitilyJson (w http.ResponseWriter, r *http.Request) {
+	resp:= jsonResponse{
+		Ok: false,
+		Message: "AvailabitilyJson",
+	}
+	out,err := json.MarshalIndent(resp, "", "")
+	if err!=nil {
+		log.Println(err)
+	}
+	// log.Println(string(out))
+	w.Header().Set("Content-Type","application/json")
+	_,_ = w.Write(out)
 }
 
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request)  {

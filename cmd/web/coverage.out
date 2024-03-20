@@ -1,0 +1,11 @@
+mode: set
+github.com/haodev88/bookings/cmd/web/main.go:20.13,29.2 5 0
+github.com/haodev88/bookings/cmd/web/main.go:31.18,46.14 9 1
+github.com/haodev88/bookings/cmd/web/main.go:46.14,49.3 2 0
+github.com/haodev88/bookings/cmd/web/main.go:50.2,60.12 7 1
+github.com/haodev88/bookings/cmd/web/middleware.go:10.54,11.82 1 0
+github.com/haodev88/bookings/cmd/web/middleware.go:11.82,14.3 2 0
+github.com/haodev88/bookings/cmd/web/middleware.go:18.45,28.2 4 1
+github.com/haodev88/bookings/cmd/web/middleware.go:31.50,34.2 2 1
+github.com/haodev88/bookings/cmd/web/routes.go:12.49,42.2 19 1
+github.com/haodev88/bookings/cmd/web/routes.go:44.51,46.2 1 0

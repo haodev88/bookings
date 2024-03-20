@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-func routes(app *config.AppConfig) http.Handler  {
-	mux:= chi.NewRouter()
+func routes(app *config.AppConfig) http.Handler {
+	mux := chi.NewRouter()
 	mux.Use(middleware.Recoverer)
 	// mux.Use(WriteToConsole)
 	mux.Use(SessionLoad)
@@ -23,9 +23,9 @@ func routes(app *config.AppConfig) http.Handler  {
 	mux.Get("/generals-quarters", handlers.Repo.Generals)
 	mux.Get("/majors-suite", handlers.Repo.Majors)
 
-	mux.Get("/search-availabitily", handlers.Repo.Availabitily)
-	mux.Post("/search-availabitily", handlers.Repo.PostAvailabitily)
-	mux.Post("/search-availabitily-json", handlers.Repo.AvailabitilyJson)
+	mux.Get("/search-availability", handlers.Repo.Availability)
+	mux.Post("/search-availability", handlers.Repo.PostAvailability)
+	mux.Post("/search-availability-json", handlers.Repo.AvailabilityJson)
 
 	mux.Get("/make-reservation", handlers.Repo.Reservation)
 	mux.Post("/make-reservation", handlers.Repo.PostReservation)
@@ -41,6 +41,6 @@ func routes(app *config.AppConfig) http.Handler  {
 	return mux
 }
 
-func test(w http.ResponseWriter, r *http.Request)  {
-	_,_ = w.Write([]byte(fmt.Sprintf("This is test function %s", "test")))
+func test(w http.ResponseWriter, r *http.Request) {
+	_, _ = w.Write([]byte(fmt.Sprintf("This is test function %s", "test")))
 }

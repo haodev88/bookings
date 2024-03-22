@@ -71,15 +71,15 @@ func (m *Repository) PostReservation (w http.ResponseWriter, r *http.Request) {
 	}
 
 	form:=forms.New(r.PostForm)
-	// form.Has("first_name", r)
-	form.Required(r, "first_name", "last_name", "email")
-	form.MinLength("first_name",3, r)
+	// form.Has("first_name")
+	form.Required("first_name", "last_name", "email")
+	form.MinLength("first_name",3)
 	form.IsEmail("email")
 
 	if !form.Valid() {
 		data:=make(map[string]interface{})
 		data["reservation"] = reservation
-		render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TempldateData {
+		_ = render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TempldateData {
 			Form: form,
 			Data: data,
 		})
@@ -100,32 +100,32 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	var data map[string]interface{}
 	data = make(map[string]interface{})
 	data["reservation"] = reservation
-	render.RenderTemplate(w, r, "reservation-summary.page.tmpl", &models.TempldateData{
+	_= render.RenderTemplate(w, r, "reservation-summary.page.tmpl", &models.TempldateData{
 		Data: data,
 	})
 }
 
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request)  {
-	render.RenderTemplate(w, r, "generals.page.tmpl", &models.TempldateData{
+	_= render.RenderTemplate(w, r, "generals.page.tmpl", &models.TempldateData{
 
 	})
 }
 
 func (m *Repository) Majors (w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "majors.page.tmpl", &models.TempldateData{
+	_= render.RenderTemplate(w, r, "majors.page.tmpl", &models.TempldateData{
 
 	})
 }
 
-func (m *Repository) Availabitily (w http.ResponseWriter, r *http.Request) {
+func (m *Repository) Availability (w http.ResponseWriter, r *http.Request) {
 	var stringMap = make(map[string]string)
 	stringMap["title"] = "Search for Availability"
-	render.RenderTemplate(w, r, "search-availability.page.tmpl", &models.TempldateData{
+	_= render.RenderTemplate(w, r, "search-availability.page.tmpl", &models.TempldateData{
 		StringMap: stringMap,
 	})
 }
 
-func (m *Repository) PostAvailabitily(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	startDate := r.Form.Get("start")
 	endDate   := r.Form.Get("end")
 	_,_ = w.Write([]byte(fmt.Sprintf("Start data is %s and end date is %s", startDate, endDate)))
@@ -136,7 +136,7 @@ type jsonResponse struct {
 	Message string `json:"message"`
 }
 
-func (m * Repository) AvailabitilyJson (w http.ResponseWriter, r *http.Request) {
+func (m * Repository) AvailabilityJson (w http.ResponseWriter, r *http.Request) {
 	resp:= jsonResponse{
 		Ok: false,
 		Message: "AvailabitilyJson",
@@ -151,7 +151,7 @@ func (m * Repository) AvailabitilyJson (w http.ResponseWriter, r *http.Request) 
 }
 
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request)  {
-	render.RenderTemplate(w, r, "contact.page.tmpl", &models.TempldateData{
+	_= render.RenderTemplate(w, r, "contact.page.tmpl", &models.TempldateData{
 
 	})
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/haodev88/bookings/internal/config"
+	"github.com/haodev88/bookings/internal/driver"
 	"github.com/haodev88/bookings/internal/handlers"
 	"github.com/haodev88/bookings/internal/helpers"
 	"github.com/haodev88/bookings/internal/models"
@@ -22,17 +23,22 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 
 func main() {
-	err:= Run()
+	db, err:= Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.SQL.Close()
+
 	fmt.Println("Running with port", PORT_NUM)
 	srv:= &http.Server{
 		Addr: PORT_NUM,
 		Handler: routes(&app),
 	}
-	err= srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	log.Fatal(err)
 }
 
-func Run() error {
+func Run() (*driver.DB, error) {
 	// Register gob
 	gob.Register(models.Reservation{})
 
@@ -51,22 +57,32 @@ func Run() error {
 	session.Cookie.Persist  = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure   = app.InProduction
+	app.Session  = session
+
+	// connect to database
+	log.Println("Connecting to database")
+	db, err:= driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=root")
+	if err != nil {
+		log.Fatal("Can not connect to database! Dying...")
+	}
+
+	log.Println("Connected to database!")
+
 
 	tc,err := render.CreateTemplateCache()
 	if err!=nil {
 		log.Fatal("can not create template cache")
-		return err
+		return nil, err
 	}
 	app.TemplateCache = tc
 	app.UseCache = false
-	app.Session  = session
 
 	/** call handeler **/
-	repo := handlers.NewRepo(&app)
+	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandler(repo)
 	helpers.NewHelper(&app)
 
 	/** render template **/
 	render.NewRenderer(&app)
-	return nil
+	return db, nil
 }

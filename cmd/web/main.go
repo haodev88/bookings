@@ -6,16 +6,20 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/haodev88/bookings/internal/config"
 	"github.com/haodev88/bookings/internal/handlers"
+	"github.com/haodev88/bookings/internal/helpers"
 	"github.com/haodev88/bookings/internal/models"
 	"github.com/haodev88/bookings/internal/render"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 const PORT_NUM =  ":8080"
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func main() {
 	err:= Run()
@@ -34,6 +38,12 @@ func Run() error {
 
 	// change this to true when in production
 	app.InProduction = true
+
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
 
 	// session
 	session = scs.New()
@@ -54,6 +64,7 @@ func Run() error {
 	/** call handeler **/
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandler(repo)
+	helpers.NewHelper(&app)
 
 	/** render template **/
 	render.NewRenderer(&app)

@@ -10,6 +10,11 @@ type Person struct {
 	job string
 }
 
+type Test struct {
+	firstName string
+	lastName string
+}
+
 func main()  {
 	/*
 	myArr:=make(map[string]string)
@@ -84,5 +89,31 @@ func main()  {
 		log.Println(keyName, item.name)
 		log.Println(keyJob, item.job)
 	}
+
+	//data:= make(map[string][]string)
+	//data["test"] = []string{"one", "two"}
+	//fmt.Println(data["test"][0])
+
+	data := make(map[string][][]Test)
+	data["test"] = append(data["test"], []Test{
+		{"Hao", "Tran"},
+		{"Dieu", "Truong"},
+	})
+
+	/*
+	var data [][]Person
+		data = append(data, []Person{
+			{"Hao", "Tran"},
+			{"Dieu", "Truong"},
+		})
+		data = append(data, []Person{
+			{"Hao1", "Tran1"},
+			{"Dieu1", "Truong1"},
+		})
+		fmt.Println(data)
+	 */
+
+
+
 }
 

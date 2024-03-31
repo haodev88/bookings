@@ -13,6 +13,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -20,6 +21,8 @@ import (
 var app config.AppConfig
 var session *scs.SessionManager
 var functions = template.FuncMap{}
+var pathToTemplates = "./../../templates"
+
 
 func getRoutes() http.Handler {
 	// Register gob
@@ -27,6 +30,12 @@ func getRoutes() http.Handler {
 
 	// change this to true when in production
 	app.InProduction = false
+
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
 
 	// session
 	session = scs.New()

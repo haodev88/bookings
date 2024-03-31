@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/haodev88/bookings/internal/config"
 	"github.com/haodev88/bookings/internal/forms"
+	"github.com/haodev88/bookings/internal/helpers"
 	"github.com/haodev88/bookings/internal/models"
 	"github.com/haodev88/bookings/internal/render"
-	"log"
 	"net/http"
 )
 
@@ -29,7 +29,7 @@ func NewHandler(r *Repository)  {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request)  {
-	render.RenderTemplate(w, r, "home.page.tmpl", &models.TempldateData{
+	_= render.RenderTemplate(w, r, "home.page.tmpl", &models.TempldateData{
 
 	})
 }
@@ -41,7 +41,7 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request)  {
 
 	stringMap["test"] = "Data Model from about page"
 	stringMap["name"] = "Hao tran here"
-	render.RenderTemplate(w, r, "about.page.tmpl", &models.TempldateData{
+	_= render.RenderTemplate(w, r, "about.page.tmpl", &models.TempldateData{
 		StringMap: stringMap,
 	})
 }
@@ -50,7 +50,7 @@ func (m *Repository) Reservation (w http.ResponseWriter, r *http.Request) {
 	var emptyReservation models.Reservation
 	data:= make(map[string]interface{})
 	data["reservation"] = emptyReservation
-	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TempldateData {
+	_= render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TempldateData {
 		Form:forms.New(nil),
 		Data: data,
 	})
@@ -59,7 +59,7 @@ func (m *Repository) Reservation (w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReservation (w http.ResponseWriter, r *http.Request) {
 	err:=r.ParseForm()
 	if err!=nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -92,8 +92,8 @@ func (m *Repository) PostReservation (w http.ResponseWriter, r *http.Request) {
 func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 	reservation,ok := m.App.Session.Get(r.Context(),"reservation").(models.Reservation)
 	if !ok {
-		// log.Println("can not get item from session")
-		m.App.Session.Put(r.Context(), "error", "Can't get reservation")
+		m.App.ErrorLog.Println("Can't get reservation from session")
+		m.App.Session.Put(r.Context(), "error", "Can't reservation from session")
 		http.Redirect(w, r,"/", http.StatusTemporaryRedirect)
 	}
 	m.App.Session.Remove(r.Context(), "reservation")
@@ -143,7 +143,8 @@ func (m * Repository) AvailabilityJson (w http.ResponseWriter, r *http.Request) 
 	}
 	out,err := json.MarshalIndent(resp, "", "")
 	if err!=nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 	// log.Println(string(out))
 	w.Header().Set("Content-Type","application/json")

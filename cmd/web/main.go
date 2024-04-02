@@ -41,6 +41,9 @@ func main() {
 func Run() (*driver.DB, error) {
 	// Register gob
 	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
+	gob.Register(models.Restriction{})
 
 	// change this to true when in production
 	app.InProduction = true

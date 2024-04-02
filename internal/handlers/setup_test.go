@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/haodev88/bookings/internal/config"
+	"github.com/haodev88/bookings/internal/driver"
 	"github.com/haodev88/bookings/internal/models"
 	"github.com/haodev88/bookings/internal/render"
 	"github.com/justinas/nosurf"
@@ -27,6 +28,9 @@ var pathToTemplates = "./../../templates"
 func getRoutes() http.Handler {
 	// Register gob
 	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
+	gob.Register(models.Restriction{})
 
 	// change this to true when in production
 	app.InProduction = false
@@ -52,8 +56,11 @@ func getRoutes() http.Handler {
 	app.UseCache = true
 	app.Session  = session
 
+	// call DB
+	db, _:= driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=root")
+
 	/** call handeler **/
-	repo := NewRepo(&app)
+	repo := NewRepo(&app, db)
 	NewHandler(repo)
 
 	/** render template **/

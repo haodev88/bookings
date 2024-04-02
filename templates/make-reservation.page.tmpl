@@ -25,6 +25,19 @@
                                id="last_name" autocomplete="off" type='text'
                                name='last_name' value="{{ $res.LastName }}" required>
                     </div>
+
+                    <div class="form-group">
+                        <label for="last_name">Start Date:</label>
+                        <input class="form-control" id="start_date" type="text" name="start_date">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">End Date:</label>
+                        <input class="form-control" id="end_date" type="text" name="end_date">
+                    </div>
+
+                    <input type="hidden" name="room_id" value="1">
+
                     <div class="form-group">
                         <label for="email">Email:</label>
                         {{ with .Form.Errors.Get "email" }}

@@ -58,15 +58,3 @@ func NewDatabase(dsn string) (*sql.DB, error)  {
 	}
 	return db, nil
 }
-
-/*
-func main()  {
-	dsn:= "host=localhost port=5432 dbname=bookings user=postgres password=root"
-	conn, err := ConnectSQL(dsn)
-	if (err!=nil) {
-		log.Fatal(err)
-	}
-	defer conn.SQL.Close()
-	log.Println("connected ok")
-}
- */

@@ -28,7 +28,13 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.SQL.Close()
+	defer close(app.MailChan)
 
+	// Listen for template email
+	fmt.Println("Listen for sending email")
+	listenForMail()
+
+	// Create route
 	fmt.Println("Running with port", PORT_NUM)
 	srv:= &http.Server{
 		Addr: PORT_NUM,
@@ -45,8 +51,11 @@ func Run() (*driver.DB, error) {
 	gob.Register(models.Room{})
 	gob.Register(models.Restriction{})
 
+	mailchan:= make(chan models.MailData)
+	app.MailChan = mailchan
+
 	// change this to true when in production
-	app.InProduction = true
+	app.InProduction = false
 
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	app.InfoLog = infoLog

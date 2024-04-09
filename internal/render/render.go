@@ -20,7 +20,7 @@ func NewRenderer(appConfig *config.AppConfig)  {
 	app = appConfig
 }
 
-func addDefaultData(data *models.TempldateData, r *http.Request) *models.TempldateData {
+func addDefaultData(data *models.TemplateData, r *http.Request) *models.TemplateData {
 	data.Flash     = app.Session.PopString(r.Context(), "flash")
 	data.Error     = app.Session.PopString(r.Context(), "error")
 	data.Warning   = app.Session.PopString(r.Context(), "warning")
@@ -28,7 +28,7 @@ func addDefaultData(data *models.TempldateData, r *http.Request) *models.Templda
 	return data
 }
 
-func Template(w http.ResponseWriter, r *http.Request, tmpl string, data *models.TempldateData) error {
+func Template(w http.ResponseWriter, r *http.Request, tmpl string, data *models.TemplateData) error {
 	var tc map[string]*template.Template
 	if app.UseCache {
 		tc = app.TemplateCache

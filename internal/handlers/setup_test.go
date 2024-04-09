@@ -7,7 +7,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/haodev88/bookings/internal/config"
-	"github.com/haodev88/bookings/internal/driver"
 	"github.com/haodev88/bookings/internal/models"
 	"github.com/haodev88/bookings/internal/render"
 	"github.com/justinas/nosurf"
@@ -16,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 )
 
@@ -25,12 +25,8 @@ var functions = template.FuncMap{}
 var pathToTemplates = "./../../templates"
 
 
-func getRoutes() http.Handler {
-	// Register gob
+func TestMain(m *testing.M) {
 	gob.Register(models.Reservation{})
-	gob.Register(models.User{})
-	gob.Register(models.Room{})
-	gob.Register(models.Restriction{})
 
 	// change this to true when in production
 	app.InProduction = false
@@ -41,30 +37,41 @@ func getRoutes() http.Handler {
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	app.ErrorLog = errorLog
 
-	// session
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
-	session.Cookie.Persist  = true
+	session.Cookie.Persist = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
-	session.Cookie.Secure   = app.InProduction
+	session.Cookie.Secure = app.InProduction
+	app.Session = session
 
-	tc,err := CreateTestTemplateCache()
-	if err!=nil {
-		log.Fatal("can not create template cache")
+	mainChan:= make(chan models.MailData)
+	app.MailChan = mainChan
+	defer close(mainChan)
+	listenForMail()
+
+	tc, err := CreateTestTemplateCache()
+	if err != nil {
+		log.Fatal("cannot create template cache")
 	}
+
 	app.TemplateCache = tc
 	app.UseCache = true
-	app.Session  = session
 
-	// call DB
-	db, _:= driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=root")
-
-	/** call handeler **/
-	repo := NewRepo(&app, db)
+	repo := NewTestRepo(&app)
 	NewHandler(repo)
-
-	/** render template **/
 	render.NewRenderer(&app)
+	os.Exit(m.Run())
+}
+
+func listenForMail()  {
+	go func() {
+		for {
+			_= <- app.MailChan
+		}
+	}()
+}
+
+func getRoutes() http.Handler {
 
 	mux := chi.NewRouter()
 	mux.Use(middleware.Recoverer)

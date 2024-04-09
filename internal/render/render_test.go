@@ -8,7 +8,7 @@ import (
 
 
 func TestAddDefaultData(t *testing.T)  {
-	var td models.TempldateData
+	var td models.TemplateData
 	r,err:=getSession()
 	if err!=nil {
 		t.Error(err)
@@ -36,12 +36,12 @@ func TestTemplate(t *testing.T) {
 	app.TemplateCache = tc
 
 	var ww myWriter
-	err = Template(&ww, r, "home.page.tmpl", &models.TempldateData{})
+	err = Template(&ww, r, "home.page.tmpl", &models.TemplateData{})
 	if err != nil {
 		t.Error("error writing template to browser", err)
 	}
 
-	err = Template(&ww, r, "non-existent.page.tmpl", &models.TempldateData{})
+	err = Template(&ww, r, "non-existent.page.tmpl", &models.TemplateData{})
 	if err == nil {
 		t.Error("rendered template that does not exist")
 	}

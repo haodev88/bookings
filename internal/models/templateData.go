@@ -2,7 +2,7 @@ package models
 
 import "github.com/haodev88/bookings/internal/forms"
 
-type TempldateData struct {
+type TemplateData struct {
 	StringMap map[string]string
 	intMap map[string]int
 	FloatMap map[string]float32

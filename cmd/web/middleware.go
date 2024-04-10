@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/haodev88/bookings/internal/helpers"
 	"github.com/justinas/nosurf"
 	"log"
 	"net/http"
@@ -31,4 +32,14 @@ func Nosurf(next http.Handler) http.Handler {
 func SessionLoad(next http.Handler) http.Handler {
 	log.Println("Session Load Ok")
 	return session.LoadAndSave(next)
+}
+
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if !helpers.IsAuthenticated(request) {
+			session.Put(request.Context(), "error", "Log in first !")
+			http.Redirect(writer, request, "/user/login", http.StatusSeeOther)
+		}
+		next.ServeHTTP(writer, request)
+	})
 }

@@ -4,10 +4,11 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/crypto/bcrypt")
+	"golang.org/x/crypto/bcrypt"
+)
 
 func main() {
-	password := "password"
+	password := "12345"
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 12)
 	fmt.Println(string(hashedPassword))
 }

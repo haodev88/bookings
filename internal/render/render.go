@@ -10,14 +10,22 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"time"
 )
 
-var functions = template.FuncMap{}
+var functions = template.FuncMap{
+	"humanDate": HumanDate,
+}
 var app *config.AppConfig
 var pathToTemplates = "./templates"
 
 func NewRenderer(appConfig *config.AppConfig)  {
 	app = appConfig
+}
+
+// return time in YYYY-MM-DD format
+func HumanDate(t time.Time) string {
+	return t.Format("2006-01-01")
 }
 
 func addDefaultData(data *models.TemplateData, r *http.Request) *models.TemplateData {

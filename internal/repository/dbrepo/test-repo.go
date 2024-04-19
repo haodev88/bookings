@@ -102,7 +102,6 @@ func (m *testDBRepo) GetRoomById(id int) (models.Room, error) {
 	return room, nil
 }
 
-
 func (m *testDBRepo) GetUserByID(id int) (models.User, error) {
 	var u models.User
 	return u, nil
@@ -112,7 +111,7 @@ func (m *testDBRepo) UpdateUser(u models.User) error {
 	return nil
 }
 
-func (m *testDBRepo)  Authenticate(email, testPassword string) (int, string, error)  {
+func (m *testDBRepo) Authenticate(email, testPassword string) (int, string, error) {
 	return 0, "", nil
 }
 
@@ -128,7 +127,7 @@ func (m *testDBRepo) AllNewReservations() ([]models.Reservation, error) {
 
 func (m *testDBRepo) GetReservationByID(id int) (models.Reservation, error) {
 	var res models.Reservation
-	return  res, nil
+	return res, nil
 }
 
 func (m *testDBRepo) UpdateReservation(u models.Reservation) error {
@@ -141,4 +140,9 @@ func (m *testDBRepo) DeleteReservation(id int) error {
 
 func (m *testDBRepo) UpdateProcessedForReservation(id int, processed int) error {
 	return nil
+}
+
+func (m *testDBRepo) AllRooms() ([]models.Room, error) {
+	var rooms []models.Room
+	return rooms, nil
 }
